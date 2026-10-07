@@ -1,0 +1,36 @@
+{
+  "name": "review-kantin-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "dev": "tsx watch src/index.ts",
+  "start": "tsx src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MedinaAmry/review-kantin-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MedinaAmry/review-kantin-api/issues"
+  },
+  "homepage": "https://github.com/MedinaAmry/review-kantin-api#readme",
+  "dependencies": {
+    "dotenv": "^18.0.5",
+    "drizzle-orm": "^1.0.0-rc.4",
+    "express": "^5.2.1",
+    "mssql": "^11.0.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/mssql": "^9.1.11",
+    "@types/node": "^26.6.4",
+    "drizzle-kit": "^1.0.0-rc.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
