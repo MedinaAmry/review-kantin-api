@@ -6,6 +6,7 @@ import usersRouter from './routes/users.routes';
 import stallsRouter from './routes/stalls.routes';
 import menuItemsRouter from './routes/menu-items.routes';
 import reviewsRouter from './routes/reviews.routes';
+import likesRouter from './routes/likes.routes';
 
 const app = express();
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/stalls', stallsRouter);
 app.use('/api/menu-items', menuItemsRouter);
 app.use('/api/reviews', reviewsRouter);
+app.use('/api/likes', likesRouter);
 
 const port = Number(process.env.PORT) || 3000;
 app.listen(port, () => {
