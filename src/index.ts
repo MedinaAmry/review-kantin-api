@@ -11,6 +11,8 @@ import flagsRouter from './routes/flags.routes';
 import auditRouter from './routes/audit.routes';
 import { notFound, errorHandler } from './middlewares/errorHandler';
 import authRouter from './routes/auth.routes';
+import swaggerUi from 'swagger-ui-express';
+import { openapi } from './docs/openapi';
 
 const app = express();
 app.use(express.json());
@@ -34,6 +36,7 @@ app.use('/api/likes', likesRouter);
 app.use('/api/flags', flagsRouter);
 app.use('/api/audit', auditRouter);
 app.use('/api/auth', authRouter);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapi));
 
 app.use(notFound);
 app.use(errorHandler);
