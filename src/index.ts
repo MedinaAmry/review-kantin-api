@@ -9,7 +9,7 @@ import reviewsRouter from './routes/reviews.routes';
 import likesRouter from './routes/likes.routes';
 import flagsRouter from './routes/flags.routes';
 import auditRouter from './routes/audit.routes';
-
+import { notFound, errorHandler } from './middlewares/errorHandler';
 
 const app = express();
 app.use(express.json());
@@ -33,6 +33,8 @@ app.use('/api/likes', likesRouter);
 app.use('/api/flags', flagsRouter);
 app.use('/api/audit', auditRouter);
 
+app.use(notFound);
+app.use(errorHandler);
 
 const port = Number(process.env.PORT) || 3000;
 app.listen(port, () => {

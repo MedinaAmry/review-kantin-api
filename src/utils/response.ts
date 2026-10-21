@@ -1,5 +1,7 @@
 import { Response } from 'express';
 
+export type FieldError = { field: string; message: string };
+
 export const sendSuccess = (
   res: Response,
   data: unknown,
@@ -15,6 +17,15 @@ export const sendSuccess = (
   });
 };
 
-export const sendError = (res: Response, message: string, status = 500) => {
-  return res.status(status).json({ success: false, message });
+export const sendError = (
+  res: Response,
+  message: string,
+  status = 500,
+  errors: FieldError[] = [],
+) => {
+  return res.status(status).json({
+    status: status >= 500 ? 'error' : 'fail',
+    message,
+    errors,
+  });
 };
