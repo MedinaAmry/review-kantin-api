@@ -10,6 +10,7 @@ import likesRouter from './routes/likes.routes';
 import flagsRouter from './routes/flags.routes';
 import auditRouter from './routes/audit.routes';
 import { notFound, errorHandler } from './middlewares/errorHandler';
+import authRouter from './routes/auth.routes';
 
 const app = express();
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use('/api/reviews', reviewsRouter);
 app.use('/api/likes', likesRouter);
 app.use('/api/flags', flagsRouter);
 app.use('/api/audit', auditRouter);
+app.use('/api/auth', authRouter);
 
 app.use(notFound);
 app.use(errorHandler);
