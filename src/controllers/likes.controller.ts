@@ -9,22 +9,14 @@ const parseId = (value: unknown) => {
 
 export const createLike = async (req: Request, res: Response) => {
   try {
-    const { reviewId, userId } = req.body ?? {};
-
-    if (!reviewId || !userId) {
-      return sendError(res, 'reviewId dan userId wajib diisi', 400);
+    const reviewIdNumber = parseId(req.body?.reviewId);
+    if (!reviewIdNumber) {
+      return sendError(res, 'reviewId wajib diisi dan harus berupa angka', 400);
     }
-    const reviewIdNumber = parseId(reviewId);
-    const userIdNumber = parseId(userId);
-    if (!reviewIdNumber || !userIdNumber) {
-      return sendError(res, 'reviewId dan userId harus berupa angka', 400);
-    }
+    const userIdNumber = req.user!.id;
 
     if (!(await likeService.reviewExists(reviewIdNumber))) {
       return sendError(res, 'Review tidak ditemukan', 404);
-    }
-    if (!(await likeService.userExists(userIdNumber))) {
-      return sendError(res, 'User tidak ditemukan', 404);
     }
     if (await likeService.findLike(reviewIdNumber, userIdNumber)) {
       return sendError(res, 'User ini sudah menyukai review tersebut', 409);
@@ -45,6 +37,10 @@ export const deleteLike = async (req: Request, res: Response) => {
 
     const existing = await likeService.getLikeById(id);
     if (!existing) return sendError(res, 'Like tidak ditemukan', 404);
+
+    if (req.user!.role !== 'admin' && existing.userId !== req.user!.id) {
+      return sendError(res, 'Anda hanya boleh menghapus like milik sendiri', 403);
+    }
 
     await likeService.deleteLike(id, existing.reviewId);
     return sendSuccess(res, null, 200, 'Like berhasil dihapus');

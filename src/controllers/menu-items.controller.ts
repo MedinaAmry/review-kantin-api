@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as menuService from '../services/menu-items.service';
+import * as stallService from '../services/stalls.service';
 import { sendSuccess, sendError } from '../utils/response';
 
 const parseId = (value: unknown) => {
@@ -9,6 +10,13 @@ const parseId = (value: unknown) => {
 
 const isValidPrice = (value: unknown) =>
   typeof value === 'number' && Number.isInteger(value) && value >= 0;
+
+// admin boleh semua; owner hanya untuk stall miliknya
+const canManageStall = async (req: Request, stallId: number) => {
+  if (req.user!.role === 'admin') return true;
+  const stall = await stallService.getStallById(stallId);
+  return !!stall && stall.ownerId === req.user!.id;
+};
 
 export const getMenuItems = async (req: Request, res: Response) => {
   try {
@@ -69,6 +77,9 @@ export const createMenuItem = async (req: Request, res: Response) => {
     if (!(await menuService.stallExists(stallIdNumber))) {
       return sendError(res, 'Stall tidak ditemukan', 404);
     }
+    if (!(await canManageStall(req, stallIdNumber))) {
+      return sendError(res, 'Anda bukan pemilik stall ini', 403);
+    }
 
     const created = await menuService.createMenuItem({
       stallId: stallIdNumber,
@@ -102,6 +113,10 @@ export const updateMenuItem = async (req: Request, res: Response) => {
     const existing = await menuService.getMenuItemById(id);
     if (!existing) return sendError(res, 'Menu tidak ditemukan', 404);
 
+    if (!(await canManageStall(req, existing.stall.id))) {
+      return sendError(res, 'Anda bukan pemilik stall ini', 403);
+    }
+
     const updated = await menuService.updateMenuItem(id, { name, price, isAvailable });
     return sendSuccess(res, updated, 200, 'Menu berhasil diperbarui');
   } catch (err) {
@@ -117,6 +132,10 @@ export const deleteMenuItem = async (req: Request, res: Response) => {
 
     const existing = await menuService.getMenuItemById(id);
     if (!existing) return sendError(res, 'Menu tidak ditemukan', 404);
+
+    if (!(await canManageStall(req, existing.stall.id))) {
+      return sendError(res, 'Anda bukan pemilik stall ini', 403);
+    }
 
     await menuService.deleteMenuItem(id);
     return sendSuccess(res, null, 200, 'Menu berhasil dihapus');

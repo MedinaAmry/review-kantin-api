@@ -29,15 +29,15 @@ export const getAuditLogs = async (req: Request, res: Response) => {
 
 export const createAuditLog = async (req: Request, res: Response) => {
   try {
-    const { userId, action, targetTable, targetId, metadata } = req.body ?? {};
+    const { action, targetTable, targetId, metadata } = req.body ?? {};
+    const userIdNumber = req.user!.id;
 
-    if (!userId || !action || !targetTable || !targetId) {
-      return sendError(res, 'userId, action, targetTable, dan targetId wajib diisi', 400);
+    if (!action || !targetTable || !targetId) {
+      return sendError(res, 'action, targetTable, dan targetId wajib diisi', 400);
     }
-    const userIdNumber = parseId(userId);
     const targetIdNumber = parseId(targetId);
-    if (!userIdNumber || !targetIdNumber) {
-      return sendError(res, 'userId dan targetId harus berupa angka', 400);
+    if (!targetIdNumber) {
+      return sendError(res, 'targetId harus berupa angka', 400);
     }
     if (typeof action !== 'string' || action.length > 50) {
       return sendError(res, 'action harus berupa teks maksimal 50 karakter', 400);
@@ -46,14 +46,9 @@ export const createAuditLog = async (req: Request, res: Response) => {
       return sendError(res, 'targetTable harus berupa teks maksimal 50 karakter', 400);
     }
 
-    // metadata boleh berupa objek JSON atau teks biasa
     let metadataText: string | undefined;
     if (metadata !== undefined) {
       metadataText = typeof metadata === 'string' ? metadata : JSON.stringify(metadata);
-    }
-
-    if (!(await auditService.userExists(userIdNumber))) {
-      return sendError(res, 'User tidak ditemukan', 404);
     }
 
     const created = await auditService.createAuditLog({

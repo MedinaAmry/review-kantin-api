@@ -1,16 +1,9 @@
 import { Router } from 'express';
-import {
-  getReviews,
-  getReviewById,
-  createReview,
-  deleteReview,
-} from '../controllers/reviews.controller';
+import { authenticate } from '../middlewares/authenticate';
+import { getReviews, getReviewById, deleteReview } from '../controllers/reviews.controller';
 
 const router = Router();
-
 router.get('/', getReviews);
 router.get('/:id', getReviewById);
-router.post('/', createReview);
-router.delete('/:id', deleteReview);
-
+router.delete('/:id', authenticate, deleteReview);
 export default router;
