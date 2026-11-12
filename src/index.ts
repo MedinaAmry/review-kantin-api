@@ -13,8 +13,10 @@ import { notFound, errorHandler } from './middlewares/errorHandler';
 import authRouter from './routes/auth.routes';
 import swaggerUi from 'swagger-ui-express';
 import { openapi } from './docs/openapi';
+import { cors } from './middlewares/cors';
 
 const app = express();
+app.use(cors);
 app.use(express.json());
 
 // Endpoint tes koneksi
